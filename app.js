@@ -4,7 +4,7 @@ const morgan = require('morgan')
 const express = require('express');
 serverDebugger = require('debug')('server')
 const app = express();
-if(process.env.NODE_ENV==="development"){
+if (process.env.NODE_ENV === "development") {
     app.use(morgan('dev'))
 }
 
