@@ -17,13 +17,7 @@ exports.studentSignUp = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     student.password = await bcrypt.hash(student.password, salt);
     student.confirmationToken = student.generateConfirmationToken()
-    options.subject = "Please confirm your Email"
-    options.html = `<h1>Email Confirmation</h1>
-    <h2>Hello ${student.name}</h2>
-    <p>Thank you for subscribing. Please confirm your email by clicking on the following link</p>
-    <a href=http://localhost:3000${baseApiURl}/auth/confirm?confirmationToken=${student.confirmationToken}> Click here</a>
-    <p>Note that this link will expire after 3 days from the date of sending this email.</p>
-    </div>`
+    setEmailOptions(student)
     await sendConfirmationEmail(student.email)
     await student.save()
     res.send(_.pick(student, ['name', 'email', 'phoneNumber']))
@@ -47,4 +41,54 @@ exports.verifyStudent = async (req, res) => {
     else {
         return res.status(404).send("Student is not found")
     }
+}
+
+exports.login = async (req,res)=>{
+    let role = req.query.role
+    if(role==="student"){
+        let student = await Student.findOne({ email: req.body.email })
+        if(!student) return res.status(404).send("This email wasn't registered before, Please signup first")
+        const validPassword = await bcrypt.compare(req.body.password, student.password);
+        if (!validPassword) return res.status(400).send('Invalid email or password.');
+        if(student.isVerified==false){
+            try {
+                let decoded = jwt.verify(student.confirmationToken, process.env.CONFIRMATION_TOKEN_PRIVATE_KEY)
+                return res.status(400).send("This email isn't verified yet, Pleas check your inbox to verify")
+            }
+            catch (err) {
+                res.status(400).send("Please verify your email, we will send another verification code as the previous one is expired. Check your inbox!")
+                student.confirmationToken = student.generateConfirmationToken()
+                setEmailOptions(student)
+                await sendConfirmationEmail(student.email)
+                await student.save()
+            }
+        }
+        else{
+        const token = student.generateAuthToken()
+        return res.header('x-auth-token',token).send(_.pick(student,['_id','email','name','phoneNumber']))
+        }
+    }
+    else if (role==="tutor"){
+
+        //logic of login as a tutor
+
+    }
+    else if(role==="admin"){
+        //logic of login as an admin
+
+    }
+    else{
+        return res.status(400).send("The given role isn't allowed, please send one of those roles [student,tutor,admin]")
+    }
+}
+
+function setEmailOptions(student) {
+    options.subject = "Please confirm your Email"
+    options.html = `<h1>Email Confirmation</h1>
+    <h2>Hello ${student.name}</h2>
+    <p>Thank you for subscribing. Please confirm your email by clicking on the following link</p>
+    <a href=http://localhost:3000${baseApiURl}/auth/confirm?confirmationToken=${student.confirmationToken}> Click here</a>
+    <p>Note that this link will expire after 3 days from the date of sending this email.</p>
+    </div>`
+    
 }
