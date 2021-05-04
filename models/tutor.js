@@ -5,6 +5,7 @@ const { JoiPasswordComplexity } = require('joi-password')
 require('dotenv').config()
 const Joi = require('joi');
 const generateAuthToken = require('../utils/generateAuthToken')
+const jwt = require('jsonwebtoken');
 
 let tutorSchema = new mongoose.Schema({
     email: {

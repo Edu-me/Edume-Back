@@ -13,3 +13,4 @@ require('./start-up/routes')(app);
 require('./start-up/db')();
 const port = process.env.PORT || 3000;
 app.listen(port, () => serverDebugger(`Listening on port ${port}...`));
+//addAdmin("mohamed.samy@Edume.com","ABab12!@","smsm")
