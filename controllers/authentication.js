@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const { Student } = require('../models/student')
+const { Admin } = require('../models/admin')
 const _ = require('lodash');
 const nodemailer = require('nodemailer')
 const jwt = require('jsonwebtoken');
@@ -80,12 +81,20 @@ exports.login = async (req,res)=>{
         }
     }
     else if (role==="tutor"){
-
-        //logic of login as a tutor
-
+        let tutor = await Tutor.findOne({ email: req.body.email })
+        if(!tutor) return res.status(404).send("This email wasn't registered before, Please signup first")
+        const validPassword = await bcrypt.compare(req.body.password, tutor.password);
+        if (!validPassword) return res.status(400).send('Invalid email or password.');
+        const token = tutor.generateAuthToken()
+        return res.header('x-auth-token',token).send(_.pick(tutor,['_id','email','name','phoneNumber']))
     }
     else if(role==="admin"){
-        //logic of login as an admin
+        let admin = await Admin.findOne({ email: req.body.email })
+        if(!admin) return res.status(404).send("This email wasn't registered before, Please signup first")
+        const validPassword = await bcrypt.compare(req.body.password, admin.password);
+        if (!validPassword) return res.status(400).send('Invalid email or password.');
+        const token = admin.generateAuthToken()
+        return res.header('x-auth-token',token).send(_.pick(admin,['_id','email','name']))
 
     }
     else{

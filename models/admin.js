@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
 require('dotenv').config()
+const jwt = require('jsonwebtoken');
 const generateAuthToken = require('../utils/generateAuthToken')
 
 let adminSchema = new mongoose.Schema({
