@@ -1,11 +1,12 @@
 const mongoose = require('mongoose');
 const { Student } = require('../models/student')
-const bcrypt = require('bcrypt');
 const _ = require('lodash');
 const nodemailer = require('nodemailer')
 const jwt = require('jsonwebtoken');
 const { options, sendConfirmationEmail } = require('../utils/email')
-
+const passwordHashing = require('../utils/passwordHashing')
+const bcrypt = require('bcrypt');
+const {Tutor} = require('../models/tutor')
 const baseApiURl = `${process.env.API_BASE_URL}/v${process.env.API_VERSION}`
 
 exports.studentSignUp = async (req, res) => {
@@ -14,8 +15,7 @@ exports.studentSignUp = async (req, res) => {
         return res.status(400).send("This email has registered before")
     }
     student = new Student(_.pick(req.body, ['email', 'password', 'phoneNumber', 'name']))
-    const salt = await bcrypt.genSalt(10);
-    student.password = await bcrypt.hash(student.password, salt);
+    student.password= await passwordHashing(student.password)
     student.confirmationToken = student.generateConfirmationToken()
     setEmailOptions(student)
     await sendConfirmationEmail(student.email)
@@ -41,6 +41,17 @@ exports.verifyStudent = async (req, res) => {
     else {
         return res.status(404).send("Student is not found")
     }
+}
+
+exports.tutorSignup = async(req,res)=>{
+    let tutor= await Tutor.findOne({email:req.body.email})
+    if(tutor){
+        return res.status(400).send("This email has registered before")
+    }
+    tutor = new Tutor(_.pick(req.body,['email','name','password','phoneNumber','nationality','about']))
+    tutor.password= await passwordHashing(tutor.password)
+    await tutor.save()
+    return res.send(_.pick(tutor,['email','name','phoneNumber']))
 }
 
 exports.login = async (req,res)=>{

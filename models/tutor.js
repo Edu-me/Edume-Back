@@ -1,13 +1,12 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
-const jwt = require('jsonwebtoken');
+const {nationalities} = require('../utils/nationality')
 const { JoiPasswordComplexity } = require('joi-password')
 require('dotenv').config()
 const Joi = require('joi');
 const generateAuthToken = require('../utils/generateAuthToken')
-const phoneNumberValidator = Joi.extend(require('joi-phone-number'))
 
-let studentSchema = new mongoose.Schema({
+let tutorSchema = new mongoose.Schema({
     email: {
         type: String,
         required: true,
@@ -33,31 +32,32 @@ let studentSchema = new mongoose.Schema({
         minlength: 3,
         maxlength: 15,
     },
-    isVerified: {
-        type: Boolean,
-        required: true,
-        default: false
-    },
-    confirmationToken:{
+    nationality:{
         type: String,
-        unique: true,
-        required: true
+        enum: {
+            values: nationalities,
+            message: '{VALUE} is not supported'
+          },
+        required: true,
+    },
+    about:{
+        type: String,
+        required: false,
+        minlength: 20,
     }
 
 })
 
-studentSchema.methods.generateAuthToken = function () {
-    const token = jwt.sign({ _id: this._id, role: "student", email: this.email }, process.env.JWT_PRIVATE_KEY);
-    return token;
-}
-studentSchema.methods.generateConfirmationToken = function () {
-    const token = jwt.sign({email: this.email }, process.env.CONFIRMATION_TOKEN_PRIVATE_KEY,{expiresIn:'3d'});
-    return token;
+tutorSchema.methods.generateAuthToken = function () {
+const token = jwt.sign({ _id: this._id, role: "tutor", email: this.email }, process.env.JWT_PRIVATE_KEY);
+return token;
 }
 
-const Student = mongoose.model('student', studentSchema);
+generateAuthToken({ _id: this._id, role: "tutor", email: this.email })
 
-function validateStudent(student) {
+const Tutor = mongoose.model('tutor', tutorSchema);
+
+function validateTutor(tutor) {
     const schema = Joi.object({
         email: Joi.string()
             .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } })
@@ -80,11 +80,15 @@ function validateStudent(student) {
         phoneNumber: Joi.string()
             .length(11)
             .required()
-            .pattern(new RegExp('^[0]{1}[1]{1}([0-2]|[5]){1}[0-9]{8}')).messages({ 'string.pattern.base': 'Please enter a valid phone number' })
-    });
-    return schema.validate(student)
+            .pattern(new RegExp('^[0]{1}[1]{1}([0-2]|[5]){1}[0-9]{8}')).messages({ 'string.pattern.base': 'Please enter a valid phone number' }),
+        nationality: Joi.string()
+        .required(),
+        about : Joi.string()
+        .min(20)
+        });
+    return schema.validate(tutor)
 }
 
-exports.validateStudent = validateStudent
-exports.Student = Student
+exports.validateTutor = validateTutor
+exports.Tutor = Tutor
 

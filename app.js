@@ -4,12 +4,12 @@ const morgan = require('morgan')
 const express = require('express');
 serverDebugger = require('debug')('server')
 const app = express();
+const addAdmin = require('./utils/adminRegister')
 if (process.env.NODE_ENV === "development") {
     app.use(morgan('dev'))
 }
 
 require('./start-up/routes')(app);
 require('./start-up/db')();
-
 const port = process.env.PORT || 3000;
 app.listen(port, () => serverDebugger(`Listening on port ${port}...`));
