@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
-const {nationalities} = require('../utils/nationality')
+const { nationalities } = require('../utils/nationality')
 const { JoiPasswordComplexity } = require('joi-password')
 require('dotenv').config()
 const Joi = require('joi');
@@ -33,25 +33,47 @@ let tutorSchema = new mongoose.Schema({
         minlength: 3,
         maxlength: 15,
     },
-    nationality:{
+    nationality: {
         type: String,
         enum: {
             values: nationalities,
             message: '{VALUE} is not supported'
-          },
+        },
         required: true,
     },
-    about:{
+    about: {
         type: String,
         required: false,
         minlength: 20,
-    }
+    },
+    availability:{
+        type:
+        [
+        new mongoose.Schema({
+            day:{
+                type:"String",
+                required:true,
+                enum: {
+                    values: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+                    message: '{VALUE} is not a week day'
+                }
+            },
+            availabe: {
+                type: Boolean,
+                required: true,
+                default: true
+            }
+        }),
+    ],
+    required: true,
+    default: [{day: "Sunday"},{day: "Monday"},{day: "Tuesday"},{day: "Wednesday"},{day: "Thursday"},{day: "Friday"},{day: "Saturday"}]
+}
 
 })
 
 tutorSchema.methods.generateAuthToken = function () {
-const token = jwt.sign({ _id: this._id, role: "tutor", email: this.email }, process.env.JWT_PRIVATE_KEY);
-return token;
+    const token = jwt.sign({ _id: this._id, role: "tutor", email: this.email }, process.env.JWT_PRIVATE_KEY);
+    return token;
 }
 
 generateAuthToken({ _id: this._id, role: "tutor", email: this.email })
@@ -83,10 +105,10 @@ function validateTutor(tutor) {
             .required()
             .pattern(new RegExp('^[0]{1}[1]{1}([0-2]|[5]){1}[0-9]{8}')).messages({ 'string.pattern.base': 'Please enter a valid phone number' }),
         nationality: Joi.string()
-        .required(),
-        about : Joi.string()
-        .min(20)
-        });
+            .required(),
+        about: Joi.string()
+            .min(20)
+    });
     return schema.validate(tutor)
 }
 
