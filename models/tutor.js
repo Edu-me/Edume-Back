@@ -4,7 +4,7 @@ const { nationalities } = require('../utils/nationality')
 const { JoiPasswordComplexity } = require('joi-password')
 require('dotenv').config()
 const Joi = require('joi');
-const generateAuthToken = require('../utils/generateAuthToken')
+const generateToken = require('../utils/generateToken')
 const jwt = require('jsonwebtoken');
 
 let tutorSchema = new mongoose.Schema({
@@ -18,7 +18,7 @@ let tutorSchema = new mongoose.Schema({
     password: {
         type: String,
         required: true,
-        minlength: 8,
+        minlength: 9,
         maxlength: 1024
     },
     phoneNumber: {
@@ -71,12 +71,7 @@ let tutorSchema = new mongoose.Schema({
 
 })
 
-tutorSchema.methods.generateAuthToken = function () {
-    const token = jwt.sign({ _id: this._id, role: "tutor", email: this.email }, process.env.JWT_PRIVATE_KEY);
-    return token;
-}
-
-generateAuthToken({ _id: this._id, role: "tutor", email: this.email })
+tutorSchema.methods.generateAuthToken = generateToken({ _id: this._id, role: "tutor", email: this.email },process.env.JWT_PRIVATE_KEY)
 
 const Tutor = mongoose.model('tutor', tutorSchema);
 
@@ -91,10 +86,11 @@ function validateTutor(tutor) {
             .min(3)
             .max(15),
         password: JoiPasswordComplexity.string()
-            .minOfSpecialCharacters(2)
-            .minOfLowercase(2)
-            .minOfUppercase(2)
-            .minOfNumeric(2)
+            .min(9)
+            .minOfSpecialCharacters(1)
+            .minOfLowercase(1)
+            .minOfUppercase(1)
+            .minOfNumeric(1)
             .required(),
         confirmPassword: Joi.string()
             .required()

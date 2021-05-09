@@ -77,6 +77,7 @@ exports.login = async (req,res)=>{
         }
         else{
         const token = student.generateAuthToken()
+        require('dotenv').config()
         return res.header('x-auth-token',token).send(_.pick(student,['_id','email','name','phoneNumber']))
         }
     }

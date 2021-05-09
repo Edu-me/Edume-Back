@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const { JoiPasswordComplexity } = require('joi-password')
 require('dotenv').config()
 const Joi = require('joi');
-const generateAuthToken = require('../utils/generateAuthToken')
+const generateToken = require('../utils/generateToken')
 const phoneNumberValidator = Joi.extend(require('joi-phone-number'))
 
 let studentSchema = new mongoose.Schema({
@@ -18,7 +18,7 @@ let studentSchema = new mongoose.Schema({
     password: {
         type: String,
         required: true,
-        minlength: 8,
+        minlength: 9,
         maxlength: 1024
     },
     phoneNumber: {
@@ -46,14 +46,15 @@ let studentSchema = new mongoose.Schema({
 
 })
 
-studentSchema.methods.generateAuthToken = function () {
-    const token = jwt.sign({ _id: this._id, role: "student", email: this.email }, process.env.JWT_PRIVATE_KEY);
-    return token;
-}
+
+studentSchema.methods.generateAuthToken = generateToken({ _id: this._id, role: "student", email: this.email },process.env.JWT_PRIVATE_KEY)
+
 studentSchema.methods.generateConfirmationToken = function () {
     const token = jwt.sign({email: this.email }, process.env.CONFIRMATION_TOKEN_PRIVATE_KEY,{expiresIn:'3d'});
     return token;
 }
+
+
 
 const Student = mongoose.model('student', studentSchema);
 
@@ -67,11 +68,12 @@ function validateStudent(student) {
             .required()
             .min(3)
             .max(15),
-        password: JoiPasswordComplexity.string()
-            .minOfSpecialCharacters(2)
-            .minOfLowercase(2)
-            .minOfUppercase(2)
-            .minOfNumeric(2)
+            password: JoiPasswordComplexity.string()
+            .min(9)
+            .minOfSpecialCharacters(1)
+            .minOfLowercase(1)
+            .minOfUppercase(1)
+            .minOfNumeric(1)
             .required(),
         confirmPassword: Joi.string()
             .required()

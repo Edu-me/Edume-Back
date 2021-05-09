@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const validator = require('validator');
 require('dotenv').config()
 const jwt = require('jsonwebtoken');
-const generateAuthToken = require('../utils/generateAuthToken')
+const generateToken = require('../utils/generateToken')
 
 let adminSchema = new mongoose.Schema({
     email: {
@@ -15,7 +15,7 @@ let adminSchema = new mongoose.Schema({
     password: {
         type: String,
         required: true,
-        minlength: 8,
+        minlength: 9,
         maxlength: 1024
     },
     name: {
@@ -27,10 +27,8 @@ let adminSchema = new mongoose.Schema({
 
 })
 
-adminSchema.methods.generateAuthToken =function(){
-const token = jwt.sign({ _id: this._id, role: "admin", email: this.email }, process.env.JWT_PRIVATE_KEY);
-return token;
-}
+adminSchema.methods.generateAuthToken = generateToken({ _id: this._id, role: "admin", email: this.email },process.env.JWT_PRIVATE_KEY)
+
 const Admin=mongoose.model('admin', adminSchema);
 exports.Admin = Admin
 
