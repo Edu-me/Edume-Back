@@ -27,7 +27,9 @@ let adminSchema = new mongoose.Schema({
 
 })
 
-adminSchema.methods.generateAuthToken = generateToken({ _id: this._id, role: "admin", email: this.email },process.env.JWT_PRIVATE_KEY)
+adminSchema.methods.generateAuthToken = function generateAuthToken() {
+    return jwt.sign({ _id: this._id, role: "admin", email: this.email },process.env.JWT_PRIVATE_KEY);
+}
 
 const Admin=mongoose.model('admin', adminSchema);
 exports.Admin = Admin
