@@ -11,4 +11,4 @@ module.exports = () => {
     })
     .then(() => dbDebugger('Connected to MongoDB...'))
     .catch(err => dbDebugger('Could not connect to MongoDB...'));
-}
+    }
