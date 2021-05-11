@@ -71,7 +71,9 @@ let tutorSchema = new mongoose.Schema({
 
 })
 
-tutorSchema.methods.generateAuthToken = generateToken({ _id: this._id, role: "tutor", email: this.email },process.env.JWT_PRIVATE_KEY)
+tutorSchema.methods.generateAuthToken = function generateAuthToken() {
+    return jwt.sign({ _id: this._id, role: "tutor", email: this.email },process.env.JWT_PRIVATE_KEY);
+}
 
 const Tutor = mongoose.model('tutor', tutorSchema);
 
