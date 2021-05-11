@@ -5,7 +5,7 @@ const auth=require('../../middlewares/authentication')
 const admin = require('../../middlewares/admin')
 
 router.get('/getTutors',[auth,admin], controller.getTutors)
-router.delete('/deleteTutor',[auth,admin], controller.deleteTutor)
+router.delete('/deleteTutor/:id',[auth,admin], controller.deleteTutor)
 
 
 module.exports = router
