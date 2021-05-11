@@ -1,5 +1,6 @@
+const { forEach } = require('lodash');
 const mongoose = require('mongoose');
-const { Service } = require('../models/service');
+const { Service, Subject } = require('../models/service');
 const { Tutor } = require('../models/tutor');
 const { TutorService } = require('../models/tutorService');
 
@@ -30,17 +31,40 @@ exports.addTutorService = async (req, res) => {
 }
 
 exports.getTutorServices= async (req,res)=>{
+    let tutorServices =await TutorService.find({tutor:req.params.id}).populate('tutor', 'name email nationality -_id')
+    .populate({path: 'service',populate:{
+        path:'subject',
+        model: Subject
+    }})
+    .select("-__v")
+    if(tutorServices.length==0) res.status(404).send("There is no services for this tutor")
 
+    res.send(tutorServices)
 }
 
 exports.updateServiceLocations = async(req,res)=>{
-
+    let tutorService =await TutorService.findById({_id:req.params.id})
+    if(!tutorService) return res.status(404).send("No tutor service found with this id.")
+    if(req.user._id!=tutorService.tutor) return res.status(403).send("This service doesn't belong to this tutor")
+    if(tutorService.mode==="online") return res.status(400).send("you can't add locations to online service")
+    tutorService.locations=req.body.locations
+    await tutorService.save()
+    return res.send("The locations of this service have been updated successfully!")
 }
 
 exports.updateServiceAvailability = async(req,res)=>{
-
+    let tutorService =await TutorService.findById({_id:req.params.id})
+    if(!tutorService) return res.status(404).send("No tutor service found with this id.")
+    if(req.user._id!=tutorService.tutor) return res.status(403).send("This service doesn't belong to this tutor")
+    tutorService.availability=req.body.availability
+    await tutorService.save()
+    return res.send("The availability of this service has been updated successfully!")
 }
 
 exports.deleteService = async (req,res)=>{
-    
+    let tutorService =await TutorService.findById({_id:req.params.id})
+    if(!tutorService) return res.status(404).send("No tutor service found with this id.")
+    if(req.user._id!=tutorService.tutor) return res.status(403).send("This service doesn't belong to this tutor")
+    await tutorService.delete()
+    return res.send("This service has been deleted successfully")
 }
