@@ -46,7 +46,6 @@ let studentSchema = new mongoose.Schema({
 
 })
 
-
 studentSchema.methods.generateAuthToken = function generateAuthToken() {
     return jwt.sign({ _id: this._id, role: "student", email: this.email },process.env.JWT_PRIVATE_KEY);
 }

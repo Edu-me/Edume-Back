@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 require('dotenv').config()
 require('express-async-errors')
 const morgan = require('morgan')
@@ -15,3 +16,4 @@ require('./start-up/db')();
 const port = process.env.PORT || 3000;
 app.listen(port, () => serverDebugger(`Listening on port ${port}...`));
 //addAdmin("mohamed.samy@Edume.com","ABab12!@","smsm")
+
