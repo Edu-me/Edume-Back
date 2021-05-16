@@ -2,6 +2,8 @@ require('dotenv').config()
 errorDebugger = require('debug')('error')
 
 module.exports = (error, req, res, next) => {
-    errorDebugger(error.message)
-    res.status(500).send('Internal server error. Something failed')
+    errorDebugger(error.name)
+    res.status(500).send({
+        error:'Internal server error. Something failed',
+        errorDetails:error.message})
 }
