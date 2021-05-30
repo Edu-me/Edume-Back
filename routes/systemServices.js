@@ -6,7 +6,7 @@ const Joi = require('joi');
 
 router.get('/',controller.getSystemServices)
 router.get('/tutors',validate(validateServiceRequest),controller.getServiceTutors)
-
+router.get('/:id',controller.getTutor)
 function validateServiceRequest(body) {
     const schema = Joi.object({
         service: Joi.objectId().required(),

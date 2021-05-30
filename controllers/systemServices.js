@@ -2,7 +2,7 @@ const { result } = require('lodash');
 const mongoose = require('mongoose');
 const { Service } = require('../models/service');
 const { TutorService } = require('../models/tutorService');
-
+const {Tutor} = require('../models/tutor')
 exports.getSystemServices = async (req, res) => {
     let services = await Service.find()
         .populate('subject', 'subject -_id')
