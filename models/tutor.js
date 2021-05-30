@@ -44,7 +44,7 @@ let tutorSchema = new mongoose.Schema({
     about: {
         type: String,
         required: false,
-        minlength: 20,
+        default: ""
     },
     availability:{
         type:
