@@ -7,12 +7,11 @@ const auth=require('../middlewares/authentication')
 const tutor = require('../middlewares/tutor')
 const {validateTutorService} = require('../models/tutorService')
 
-router.get('/',controller.getSystemServices)
-router.post('/tutorServices',[auth,tutor,validate(validateTutorService)],controller.addTutorService)
-router.get('/tutorServices/:id',[auth],controller.getTutorServices)
-router.delete('/tutorServices/:id',[auth,tutor],controller.deleteService)
-router.put('/tutorServices/updateLocation/:id',[auth,tutor,validate(validateupdateLocations)],controller.updateServiceLocations)
-router.put('/tutorServices/updateAvailability/:id',[auth,tutor,validate(validateupdateAvailability)],controller.updateServiceAvailability)
+router.post('/',[auth,tutor,validate(validateTutorService)],controller.addTutorService)
+router.get('/:id',[auth],controller.getTutorServices)
+router.delete('/:id',[auth,tutor],controller.deleteService)
+router.put('/updateLocation/:id',[auth,tutor,validate(validateupdateLocations)],controller.updateServiceLocations)
+router.put('/updateAvailability/:id',[auth,tutor,validate(validateupdateAvailability)],controller.updateServiceAvailability)
 
 
 function validateupdateLocations(reqBody) {

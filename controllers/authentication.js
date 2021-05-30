@@ -77,7 +77,8 @@ exports.login = async (req,res)=>{
         }
         else{
         const token = student.generateAuthToken()
-        return res.header('x-auth-token',token).send(_.pick(student,['_id','email','name','phoneNumber']))
+        student.token = token
+        return res.header('x-auth-token',token).send(_.pick(student,['_id','email','name','phoneNumber','token']))
         }
     }
     else if (role==="tutor"){
@@ -86,7 +87,8 @@ exports.login = async (req,res)=>{
         const validPassword = await bcrypt.compare(req.body.password, tutor.password);
         if (!validPassword) return res.status(400).send('Invalid email or password.');
         const token = tutor.generateAuthToken()
-        return res.header('x-auth-token',token).send(_.pick(tutor,['_id','email','name','phoneNumber']))
+        tutor.token=token
+        return res.header('x-auth-token',token).send(_.pick(tutor,['_id','email','name','phoneNumber','token']))
     }
     else if(role==="admin"){
         let admin = await Admin.findOne({ email: req.body.email })
@@ -94,7 +96,8 @@ exports.login = async (req,res)=>{
         const validPassword = await bcrypt.compare(req.body.password, admin.password);
         if (!validPassword) return res.status(400).send('Invalid email or password.');
         const token = admin.generateAuthToken()
-        return res.header('x-auth-token',token).send(_.pick(admin,['_id','email','name']))
+        admin.token=token
+        return res.header('x-auth-token',token).send(_.pick(admin,['_id','email','name','token']))
 
     }
     else{

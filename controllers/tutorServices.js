@@ -4,17 +4,9 @@ const { Service, Subject, Level, SystemLanguage } = require('../models/service')
 const { Tutor } = require('../models/tutor');
 const { TutorService } = require('../models/tutorService');
 
-exports.getSystemServices = async (req, res) => {
-    let services = await Service.find()
-        .populate('subject', 'subject -_id')
-        .populate('level', 'level -_id')
-        .populate('systemLanguage', 'language -_id')
-        .select("-__v")
-    return res.send(services)
-}
+
 
 exports.addTutorService = async (req, res) => {
-
     let tutor = await Tutor.findById(req.body.tutor)
     if (!tutor) return res.status(404).send("No tutor with the given id")
     let service = await Service.findById(req.body.service)
