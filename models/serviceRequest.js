@@ -74,7 +74,7 @@ function validateRequest(request) {
         sessionDuration: Joi.number().min(1).max(3).required(),
         studentsNum: Joi.number().min(1).max(5).required(),
         day: Joi.string().valid("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday").required(),
-        message: Joi.string().min(20).max(400),
+        message: Joi.string().max(400),
     });
     return schema.validate(request)
 }

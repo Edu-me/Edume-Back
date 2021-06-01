@@ -35,7 +35,7 @@ exports.getTutorServices= async (req,res)=>{
     .populate({path:'service',populate:{
         path:'systemLanguage',
         model:SystemLanguage
-    }}).select("-_id")
+    }})
     .select("-__v -tutor")
 
     if(tutorServices.length==0) return res.status(404).send("There is no services for this tutor")
