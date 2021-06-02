@@ -85,7 +85,10 @@ exports.getStudentRequests = async (req,res)=>{
     return res.send(requests)
 }
 
-// exports.deleteRequest= async (req,res)=>{
-//     await Request.findById()
-// }
+exports.deleteRequest= async (req,res)=>{
+   let request = await Request.findById(req.params.id)
+   if(! request) return res.status(404).send("Can't find a request with this ID")
+   await request.delete()
+   return res.send("This request has been deleted successfully")
+}
 
