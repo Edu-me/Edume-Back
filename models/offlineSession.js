@@ -2,7 +2,7 @@ const Joi = require('joi');
 const mongoose = require('mongoose');
 require('dotenv').config()
 
-let onlineSessionSchema = new mongoose.Schema({
+let offlineSessionSchema = new mongoose.Schema({
     sessionTitle : {
         type: String,
         required : true
@@ -39,8 +39,8 @@ let onlineSessionSchema = new mongoose.Schema({
         min: 1,
         max: 5
     },
-    zoomMeeting:{
-        type:String,
+    location:{
+        type: String,
         required: true
     },
     tutor: {
@@ -61,7 +61,7 @@ let onlineSessionSchema = new mongoose.Schema({
 })
 
 
-function validateOnlineSession(onlineSession) {
+function validateOfflineSession(offlineSession) {
     const schema = Joi.object({
         student: Joi.objectId().required(),
         service: Joi.objectId().required(),
@@ -70,10 +70,11 @@ function validateOnlineSession(onlineSession) {
         day: Joi.string().required().min(2).max(2),
         month : Joi.string().required().min(2).max(2),
         hour : Joi.string().required().min(2).max(2),
-        minute: Joi.string().min(2).max(2).required()
+        minute: Joi.string().min(2).max(2).required(),
+        location: Joi.string().required()
     });
-    return schema.validate(onlineSession)
+    return schema.validate(offlineSession)
 }
-const OnlineSession=mongoose.model('online-session', onlineSessionSchema);
-exports.validateOnlineSession= validateOnlineSession
-exports.OnlineSession = OnlineSession
+const OfflineSession=mongoose.model('offline-session', offlineSessionSchema);
+exports.validateOfflineSession= validateOfflineSession
+exports.OfflineSession = OfflineSession
