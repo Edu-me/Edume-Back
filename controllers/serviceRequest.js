@@ -39,7 +39,10 @@ exports.updateRequestDetails = async(req,res)=>{
     if(!request) return res.status(404).send("Can't find a request with this ID")
     request.sessionDuration = req.body.sessionDuration
     request.day = req.body.day
-    request.message = req.body.message
+    if(req.body.message != null){
+        request.message = req.body.message
+    }
+    request.studentsNum = req.body.studentsNum
     await request.save()
     return res.send("This request is updated successfully")
 }
