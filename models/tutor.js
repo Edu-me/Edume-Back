@@ -83,7 +83,6 @@ function validateTutor(tutor) {
             .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } })
             .required(),
         name: Joi.string()
-            .alphanum()
             .required()
             .min(3)
             .max(15),
