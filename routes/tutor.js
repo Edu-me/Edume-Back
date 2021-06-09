@@ -21,7 +21,6 @@ function validateTutorInfo(body) {
         .required()
         .pattern(new RegExp('^[0]{1}[1]{1}([0-2]|[5]){1}[0-9]{8}')).messages({ 'string.pattern.base': 'Please enter a valid phone number' }),
         about: Joi.string()
-        .min(20)    
     })
     return schema.validate(body)
 }
