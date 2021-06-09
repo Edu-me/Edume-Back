@@ -28,7 +28,7 @@ exports.submitOnlineSession = async (req, res) => {
         minute: req.body.minute
     })
     let sessionTopic = `${service.subject.subject} for ${service.level.level} online session`
-    let sessionTime = `${new Date().getFullYear()}-${req.body.month}-${req.body.day}T${req.body.hour-2}:${req.body.minute}:00`
+    let sessionTime = `${new Date().getFullYear()}-${req.body.month}-${req.body.day}T${req.body.hour - 2}:${req.body.minute}:00`
     let zoomLink = await requestZoomLink(sessionTopic, req.body.sessionDuration, sessionTime)
     onlineSession.zoomMeeting = zoomLink
     onlineSession.sessionTitle = sessionTopic
@@ -67,6 +67,7 @@ exports.getSessions = async (req, res) => {
     let response = {}
     if (req.user.role == 'tutor') {
         response.onlineSessions = await OnlineSession.find({ tutor: req.user._id }).sort({ _id: -1 })
+            .populate('tutor', '-password -__v')
             .populate('student', '-password -__v -isVerified -confirmationToken')
             .populate({
                 path: 'service', populate: {
@@ -87,6 +88,7 @@ exports.getSessions = async (req, res) => {
                 }
             })
         response.offlineSessions = await OfflineSession.find({ tutor: req.user._id }).sort({ _id: -1 })
+            .populate('tutor', '-password -__v')
             .populate('student', '-password -__v -isVerified -confirmationToken')
             .populate({
                 path: 'service', populate: {
@@ -106,11 +108,12 @@ exports.getSessions = async (req, res) => {
                     model: SystemLanguage
                 }
             })
-            
+
     }
     else if (req.user.role == 'student') {
         response.onlineSessions = await OnlineSession.find({ student: req.user._id }).sort({ _id: -1 })
             .populate('tutor', '-password -__v')
+            .populate('student', '-password -__v -isVerified -confirmationToken')
             .populate({
                 path: 'service', populate: {
                     path: 'subject',
@@ -131,6 +134,7 @@ exports.getSessions = async (req, res) => {
             })
         response.offlineSessions = await OfflineSession.find({ student: req.user._id }).sort({ _id: -1 })
             .populate('tutor', '-password -__v')
+            .populate('student', '-password -__v -isVerified -confirmationToken')
             .populate({
                 path: 'service', populate: {
                     path: 'subject',
