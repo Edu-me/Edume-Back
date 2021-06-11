@@ -34,7 +34,7 @@ then install it and follow the installation instructions <br>
 - enter nodemon app.js in the termial which is opened in the root directory <br>
 # Documentation
 This is postman documentation includes all API endpoints with clear requirements explanation for each endpoint. <br>
-[Edume API Documentation link with title](https://documenter.getpostman.com/view/14753246/TzK2atry#b0d99e95-f32c-424b-8ec0-6b930b79b84d
+[Edume API Documentation](https://documenter.getpostman.com/view/14753246/TzK2atry#b0d99e95-f32c-424b-8ec0-6b930b79b84d
 "Edume API documentation")
 # Contributors
 <a href="https://github.com/Edu-me/Edume-Back/graphs/contributors">
