@@ -1,5 +1,5 @@
 # Edume-Back
-This is Edume RESTful API, Edumen is an application that provides tutoring service for all national educational levels in Egypt. <br>
+This is Edume RESTful API, Edume is an application that provides tutoring service for all national educational levels in Egypt. <br>
 Students can find their suitable tutors easily using the application, Tutors can show their capabilities, knowledge and experience. <br>
 The system provides both online and offline sessions to meet all students needs. <br>
 # Technologies and npm packages used
